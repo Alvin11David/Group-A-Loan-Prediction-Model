@@ -1,146 +1,52 @@
-# Group A Loan Prediction Model
+# Loan Default Prediction — Full ML Workflow
 
-End-to-end machine learning project for predicting loan default risk on LendingClub application data. The notebook walks through the full workflow: problem framing, exploratory data analysis, leakage control, preprocessing, feature engineering, model training, hyperparameter tuning, evaluation, interpretation, fairness checks, and deployment-oriented artefact saving.
+This repository contains an end-to-end Jupyter notebook implementing a complete machine-learning workflow to predict loan default using the LendingClub Accepted Loans (2007–2018) dataset.
 
-## Project Overview
+**Notebook**: Group A Loan Prediction Model.ipynb
 
-The goal is to classify a loan application as either a good loan or a bad loan before issuance, using only information available at application time. This is a high-stakes binary classification problem where false negatives are especially costly because approving a risky borrower can lead to capital loss.
+**Key points**
+- Task: binary classification — predict whether a loan will default before issuance (target: `loan_status` → engineered `target`).
+- Dataset: LendingClub Accepted Loans (2007–2018). Public dataset (Kaggle).
+- Primary metric: F1‑Macro (balanced evaluation for imbalanced classes). Secondary: AUC‑ROC, PR‑AUC, Brier score.
+- Champion model: XGBoost (Optuna‑tuned). Primary challenger: LightGBM. Interpretable fallback: CCP‑pruned Decision Tree.
 
-The notebook compares multiple models, including a baseline decision tree, random forest, XGBoost, LightGBM, and a neural network. The final workflow emphasises class imbalance handling, probability calibration, explainability, and business threshold selection.
+Contents of the notebook
+- Problem definition, EDA, leakage checks, and preprocessing decisions.
+- Feature engineering (FICO, credit-history months, ratio features, flags).
+- Train/test split (80/20 stratified), scaling, and encoding.
+- Baseline models, tuning (Grid/Randomized/Optuna), training, and evaluation.
+- Model interpretation: XGBoost gain, permutation importance, SHAP, LIME.
+- Decision threshold & business cost analysis, fairness audit, and drift monitoring (PSI).
+- Artefact saving and an end-to-end `predict_loan_default()` inference function.
 
-## Key Result
+Quick start (Colab / local)
+1. Open the notebook: [Group A Loan Prediction Model.ipynb](Group%20A%20Loan%20Prediction%20Model.ipynb)
+2. Install dependencies (notebook installs some packages). Recommended minimal requirements:
 
-On the held-out test set, the tuned random forest was the best model by macro F1 score:
-
-| Model | Accuracy | Precision | Recall | Specificity | F1 Macro | AUC-ROC | PR-AUC | Brier Score | Log Loss |
-|------|----------:|----------:|-------:|------------:|---------:|--------:|-------:|------------:|---------:|
-| Random Forest (Tuned) | 0.7461 | 0.4273 | 0.4596 | 0.8267 | 0.6392 | 0.7292 | 0.4272 | 0.1751 | 0.5269 |
-| XGBoost (Optuna) | 0.6762 | 0.3686 | 0.6655 | 0.6793 | 0.6203 | 0.7376 | 0.4420 | 0.2034 | 0.5903 |
-
-XGBoost is treated as the champion model for deployment-oriented explainability and threshold analysis, while the tuned random forest is the strongest overall performer in the reported comparison.
-
-## Notebook Workflow
-
-The notebook is organised into the following stages:
-
-1. Problem definition and business framing
-2. Dataset loading from LendingClub accepted loans data
-3. Exploratory data analysis and missing-value analysis
-4. Leakage removal, cleaning, and preprocessing
-5. Feature engineering and feature selection demonstrations
-6. Train/test split with class imbalance handling
-7. Baseline and tuned model training
-8. Hyperparameter tuning with GridSearchCV, RandomizedSearchCV, and Optuna
-9. Comprehensive model evaluation with confusion matrices, ROC, PR, calibration, and statistical tests
-10. Model comparison and selection
-11. Explainability with feature importance, SHAP, and LIME
-12. Fairness, drift monitoring, model saving, and inference function creation
-
-## Techniques Used
-
-- Missing-value analysis and high-missingness column removal
-- Leakage prevention by dropping post-issuance variables
-- Target engineering from `loan_status`
-- Ordinal, one-hot, and target-guided encoding examples
-- Scaling, polynomial features, and interaction term demonstrations
-- Filter, wrapper, and embedded feature selection
-- Class imbalance handling with `class_weight` and `scale_pos_weight`
-- Hyperparameter tuning with grid search, random search, and Optuna
-- Probability calibration and Brier score evaluation
-- McNemar’s test and bootstrap confidence intervals
-- SHAP, permutation importance, and LIME explainability
-- Cost-sensitive threshold selection for business use
-- PSI-based drift monitoring and model persistence with `joblib`
-
-## Dataset
-
-The project uses the LendingClub Accepted Loans dataset covering 2007–2018 Q4. The notebook describes it as a large tabular dataset with borrower details, loan terms, and repayment outcomes. The target is derived from `loan_status`, where fully paid loans are treated as class 0 and defaults / charged-off loans are treated as class 1.
-
-Because this is a loan approval problem, the notebook explicitly removes columns that are only known after issuance, such as payment totals and recovery-related fields, to avoid leakage.
-
-## Repository Contents
-
-- `Group A Loan Prediction Model.ipynb` - the full analysis and modelling notebook
-- `README.md` - project overview and usage guide
-
-Running the notebook also creates model artefacts and visualisations such as:
-
-- `loan_model_artefacts/` for saved models, scaler, feature names, and threshold
-- EDA and evaluation figures such as confusion matrices, ROC curves, calibration plots, SHAP plots, and drift charts
-
-## Requirements
-
-The notebook uses common data science libraries, including:
-
-- `pandas`
-- `numpy`
-- `matplotlib`
-- `seaborn`
-- `scikit-learn`
-- `xgboost`
-- `lightgbm`
-- `optuna`
-- `tensorflow`
-- `shap`
-- `lime`
-- `statsmodels`
-- `joblib`
-
-The notebook itself includes a pip install step for the extra packages used during modelling.
-
-## How To Run
-
-### 1. Open the notebook
-
-Open `Group A Loan Prediction Model.ipynb` in Jupyter, VS Code, or Google Colab.
-
-### 2. Update the dataset path
-
-The notebook currently loads the dataset from a Google Colab Drive path:
-
-```python
-/content/drive/MyDrive/accepted_2007_to_2018Q4.csv.gz
+```bash
+pip install numpy pandas scikit-learn xgboost lightgbm optuna shap lime matplotlib seaborn joblib tensorflow
 ```
 
-If you are running locally, update that path to the location of your CSV or compressed CSV file.
+3. If running in Colab: mount Google Drive and point the notebook to the compressed CSV (`accepted_2007_to_2018Q4.csv.gz`).
+4. Run the cells in order. Long-running steps (Optuna tuning, training on >1M rows) can be done on a subsample for iteration.
 
-### 3. Run the cells in order
+Saved artefacts and outputs (created by the notebook)
+- `loan_model_artefacts/` — saved models and pickled objects:
+  - `xgboost_champion.pkl`, `lightgbm_challenger.pkl`, `random_forest.pkl`, `standard_scaler.pkl`, `feature_names.pkl`, `optimal_threshold.pkl`, `neural_network_model.keras`
+- Several diagnostic plots saved as PNG files (EDA, calibration, SHAP, PR/ROC curves, learning curves, etc.).
 
-The notebook is designed to be executed top to bottom so that preprocessing, training, evaluation, and artefact saving all happen in sequence.
+Using the prediction function
+- The notebook provides `predict_loan_default(raw_application: dict)` which:
+  - loads the saved artefacts, applies required feature engineering, returns `default_probability`, `decision` (APPROVE/DECLINE), `risk_tier`, and `confidence`.
+- Example usage is included near the end of the notebook.
 
-### 4. Review the outputs
+Notes & recommendations
+- Data privacy & compliance: The dataset should be used only for research/educational purposes; remove or anonymize any PII before sharing.
+- Reproducibility: Training on the full dataset is expensive—use the tuning strategies in the notebook (subsampling, reduced folds) for development.
+- Deployment: Wrap `predict_loan_default()` with a REST API (FastAPI/Flask), add monitoring (PSI, input validation), and version model artefacts before serving.
 
-The notebook generates a large set of plots and prints the full evaluation table, including:
+License & attribution
+- Data: LendingClub Accepted Loans (2007–2018) — public data (credit to LendingClub / Kaggle dataset). Check dataset license before commercial use.
 
-- class balance summaries
-- learning curves
-- tuned model comparison
-- ROC and PR curves
-- calibration plots
-- SHAP and LIME explanations
-- fairness and drift checks
-
-## Saved Artefacts
-
-After the final cells run, the notebook saves the following deployment artefacts:
-
-- `loan_model_artefacts/xgboost_champion.pkl`
-- `loan_model_artefacts/lightgbm_challenger.pkl`
-- `loan_model_artefacts/random_forest.pkl`
-- `loan_model_artefacts/standard_scaler.pkl`
-- `loan_model_artefacts/feature_names.pkl`
-- `loan_model_artefacts/optimal_threshold.pkl`
-- `loan_model_artefacts/neural_network_model.keras`
-
-It also defines an end-to-end prediction helper named `predict_loan_default()` that can be wrapped in an API later.
-
-## Business Notes
-
-- False negatives are more expensive than false positives in this lending setting.
-- The notebook therefore includes threshold optimisation instead of relying only on the default 0.5 cutoff.
-- SHAP is used to support model interpretability and decision transparency.
-- A PSI-based drift check is included to support post-deployment monitoring.
-
-## Suggested Next Step
-
-If you want, I can also turn this notebook into a cleaner project README with badges, a short executive summary, and a compact model-results table formatted for GitHub.
+Questions or changes
+- If you want, I can: run a smaller end‑to‑end demo, extract a requirements file, or add a short `serve.md` showing how to wrap the inference function in FastAPI.
