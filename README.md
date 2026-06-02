@@ -1,4 +1,4 @@
-# Loan Default Prediction — Full ML Workflow
+# Loan Default Prediction Full ML Workflow
 
 This repository contains an end-to-end Jupyter notebook implementing a complete machine-learning workflow to predict loan default using the LendingClub Accepted Loans (2007–2018) dataset.
 
@@ -6,7 +6,7 @@ This repository contains an end-to-end Jupyter notebook implementing a complete 
 
 **Key points**
 
-- Task: binary classification — predict whether a loan will default before issuance (target: `loan_status` → engineered `target`).
+- Task: binary classification:  predict whether a loan will default before issuance (target: `loan_status` → engineered `target`).
 - Dataset: LendingClub Accepted Loans (2007–2018). Public dataset (Kaggle).
 - Primary metric: F1‑Macro (balanced evaluation for imbalanced classes). Secondary: AUC‑ROC, PR‑AUC, Brier score.
 - Champion model: XGBoost (Optuna‑tuned). Primary challenger: LightGBM. Interpretable fallback: CCP‑pruned Decision Tree.
@@ -35,7 +35,7 @@ pip install numpy pandas scikit-learn xgboost lightgbm optuna shap lime matplotl
 
 Saved artefacts and outputs (created by the notebook)
 
-- `loan_model_artefacts/` — saved models and pickled objects:
+- `loan_model_artefacts/`  saved models and pickled objects:
   - `xgboost_champion.pkl`, `lightgbm_challenger.pkl`, `random_forest.pkl`, `standard_scaler.pkl`, `feature_names.pkl`, `optimal_threshold.pkl`, `neural_network_model.keras`
 - Several diagnostic plots saved as PNG files (EDA, calibration, SHAP, PR/ROC curves, learning curves, etc.).
 
@@ -53,4 +53,4 @@ Notes & recommendations
 
 License & attribution
 
-- Data: LendingClub Accepted Loans (2007–2018) — public data (credit to LendingClub / Kaggle dataset). Check dataset license before commercial use.
+- Data: LendingClub Accepted Loans (2007–2018): public data (credit to LendingClub / Kaggle dataset). Check dataset license before commercial use.
