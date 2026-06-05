@@ -7,7 +7,7 @@ This repository contains an end-to-end Jupyter notebook implementing a complete 
 **Key points**
 
 - Task: binary classification:  predict whether a loan will default before issuance (target: `loan_status` → engineered `target`).
-- Dataset: LendingClub Accepted Loans (2007–2018). Public dataset (Kaggle).
+- Dataset: LendingClub Accepted Loans (2007–2018). Public dataset (Kaggle) and Lending Club Website.
 - Primary metric: F1‑Macro (balanced evaluation for imbalanced classes). Secondary: AUC‑ROC, PR‑AUC, Brier score.
 - Champion model: XGBoost (Optuna‑tuned). Primary challenger: LightGBM. Interpretable fallback: CCP‑pruned Decision Tree.
 
